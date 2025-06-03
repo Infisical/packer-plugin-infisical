@@ -14,7 +14,7 @@ data "infisical-secrets" "dev-secrets" {
 # usage example of the data source output
 locals {
   secrets = data.infisical-secrets.dev-secrets.secrets
-  secret_foo_value  = secrets["FOO"]
+  secret_foo_value  = secrets["FOO"].secret_value
 }
 ```
 
@@ -42,13 +42,33 @@ locals {
 
 ## Output Data
 
-Returned secrets are in key/value pairs.
+Returned secrets are in key/object pairs. Each Secret object contains data about the secret such as it's value, version, and type.
 
 <!-- Code generated from the comments of the DatasourceOutput struct in datasource/secrets/data.go; DO NOT EDIT MANUALLY -->
 
-- `secrets` (map[string]string) - Secrets
+- `secrets` (map[string]Secret) - Secrets
 
 <!-- End of code generated from the comments of the DatasourceOutput struct in datasource/secrets/data.go; -->
+
+### Secret Object
+
+<!-- Code generated from the comments of the Secret struct in datasource/secrets/data.go; DO NOT EDIT MANUALLY -->
+
+- `version` (int) - Version
+
+- `workspace` (string) - Workspace
+
+- `type` (string) - Type
+
+- `environment` (string) - Environment
+
+- `secret_key` (string) - Secret Key
+
+- `secret_value` (string) - Secret Value
+
+- `secret_comment` (string) - Secret Comment
+
+<!-- End of code generated from the comments of the Secret struct in datasource/secrets/data.go; -->
 
 ## Authentication
 

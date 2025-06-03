@@ -10,18 +10,10 @@ import (
 // FlatConfig is an auto-generated flat version of Config.
 // Where the contents of a field with a `mapstructure:,squash` tag are bubbled up.
 type FlatConfig struct {
-	PackerBuildName     *string           `mapstructure:"packer_build_name" cty:"packer_build_name" hcl:"packer_build_name"`
-	PackerBuilderType   *string           `mapstructure:"packer_builder_type" cty:"packer_builder_type" hcl:"packer_builder_type"`
-	PackerCoreVersion   *string           `mapstructure:"packer_core_version" cty:"packer_core_version" hcl:"packer_core_version"`
-	PackerDebug         *bool             `mapstructure:"packer_debug" cty:"packer_debug" hcl:"packer_debug"`
-	PackerForce         *bool             `mapstructure:"packer_force" cty:"packer_force" hcl:"packer_force"`
-	PackerOnError       *string           `mapstructure:"packer_on_error" cty:"packer_on_error" hcl:"packer_on_error"`
-	PackerUserVars      map[string]string `mapstructure:"packer_user_variables" cty:"packer_user_variables" hcl:"packer_user_variables"`
-	PackerSensitiveVars []string          `mapstructure:"packer_sensitive_variables" cty:"packer_sensitive_variables" hcl:"packer_sensitive_variables"`
-	Host                *string           `mapstructure:"host" cty:"host" hcl:"host"`
-	ServiceToken        *string           `mapstructure:"service_token" cty:"service_token" hcl:"service_token"`
-	FolderPath          *string           `mapstructure:"folder_path" cty:"folder_path" hcl:"folder_path"`
-	EnvSlug             *string           `mapstructure:"env_slug" required:"true" cty:"env_slug" hcl:"env_slug"`
+	Host         *string `mapstructure:"host" cty:"host" hcl:"host"`
+	ServiceToken *string `mapstructure:"service_token" cty:"service_token" hcl:"service_token"`
+	FolderPath   *string `mapstructure:"folder_path" cty:"folder_path" hcl:"folder_path"`
+	EnvSlug      *string `mapstructure:"env_slug" required:"true" cty:"env_slug" hcl:"env_slug"`
 }
 
 // FlatMapstructure returns a new FlatConfig.
@@ -36,18 +28,10 @@ func (*Config) FlatMapstructure() interface{ HCL2Spec() map[string]hcldec.Spec }
 // The decoded values from this spec will then be applied to a FlatConfig.
 func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 	s := map[string]hcldec.Spec{
-		"packer_build_name":          &hcldec.AttrSpec{Name: "packer_build_name", Type: cty.String, Required: false},
-		"packer_builder_type":        &hcldec.AttrSpec{Name: "packer_builder_type", Type: cty.String, Required: false},
-		"packer_core_version":        &hcldec.AttrSpec{Name: "packer_core_version", Type: cty.String, Required: false},
-		"packer_debug":               &hcldec.AttrSpec{Name: "packer_debug", Type: cty.Bool, Required: false},
-		"packer_force":               &hcldec.AttrSpec{Name: "packer_force", Type: cty.Bool, Required: false},
-		"packer_on_error":            &hcldec.AttrSpec{Name: "packer_on_error", Type: cty.String, Required: false},
-		"packer_user_variables":      &hcldec.AttrSpec{Name: "packer_user_variables", Type: cty.Map(cty.String), Required: false},
-		"packer_sensitive_variables": &hcldec.AttrSpec{Name: "packer_sensitive_variables", Type: cty.List(cty.String), Required: false},
-		"host":                       &hcldec.AttrSpec{Name: "host", Type: cty.String, Required: false},
-		"service_token":              &hcldec.AttrSpec{Name: "service_token", Type: cty.String, Required: false},
-		"folder_path":                &hcldec.AttrSpec{Name: "folder_path", Type: cty.String, Required: false},
-		"env_slug":                   &hcldec.AttrSpec{Name: "env_slug", Type: cty.String, Required: false},
+		"host":          &hcldec.AttrSpec{Name: "host", Type: cty.String, Required: false},
+		"service_token": &hcldec.AttrSpec{Name: "service_token", Type: cty.String, Required: false},
+		"folder_path":   &hcldec.AttrSpec{Name: "folder_path", Type: cty.String, Required: false},
+		"env_slug":      &hcldec.AttrSpec{Name: "env_slug", Type: cty.String, Required: false},
 	}
 	return s
 }
@@ -55,7 +39,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 // FlatDatasourceOutput is an auto-generated flat version of DatasourceOutput.
 // Where the contents of a field with a `mapstructure:,squash` tag are bubbled up.
 type FlatDatasourceOutput struct {
-	Secrets map[string]string `mapstructure:"secrets" cty:"secrets" hcl:"secrets"`
+	Secrets map[string]Secret `mapstructure:"secrets" required:"true" cty:"secrets" hcl:"secrets"`
 }
 
 // FlatMapstructure returns a new FlatDatasourceOutput.
@@ -71,6 +55,41 @@ func (*DatasourceOutput) FlatMapstructure() interface{ HCL2Spec() map[string]hcl
 func (*FlatDatasourceOutput) HCL2Spec() map[string]hcldec.Spec {
 	s := map[string]hcldec.Spec{
 		"secrets": &hcldec.AttrSpec{Name: "secrets", Type: cty.Map(cty.String), Required: false},
+	}
+	return s
+}
+
+// FlatSecret is an auto-generated flat version of Secret.
+// Where the contents of a field with a `mapstructure:,squash` tag are bubbled up.
+type FlatSecret struct {
+	Version       *int    `mapstructure:"version" required:"true" cty:"version" hcl:"version"`
+	Workspace     *string `mapstructure:"workspace" required:"true" cty:"workspace" hcl:"workspace"`
+	Type          *string `mapstructure:"type" required:"true" cty:"type" hcl:"type"`
+	Environment   *string `mapstructure:"environment" required:"true" cty:"environment" hcl:"environment"`
+	SecretKey     *string `mapstructure:"secret_key" required:"true" cty:"secret_key" hcl:"secret_key"`
+	SecretValue   *string `mapstructure:"secret_value" required:"true" cty:"secret_value" hcl:"secret_value"`
+	SecretComment *string `mapstructure:"secret_comment" required:"true" cty:"secret_comment" hcl:"secret_comment"`
+}
+
+// FlatMapstructure returns a new FlatSecret.
+// FlatSecret is an auto-generated flat version of Secret.
+// Where the contents a fields with a `mapstructure:,squash` tag are bubbled up.
+func (*Secret) FlatMapstructure() interface{ HCL2Spec() map[string]hcldec.Spec } {
+	return new(FlatSecret)
+}
+
+// HCL2Spec returns the hcl spec of a Secret.
+// This spec is used by HCL to read the fields of Secret.
+// The decoded values from this spec will then be applied to a FlatSecret.
+func (*FlatSecret) HCL2Spec() map[string]hcldec.Spec {
+	s := map[string]hcldec.Spec{
+		"version":        &hcldec.AttrSpec{Name: "version", Type: cty.Number, Required: false},
+		"workspace":      &hcldec.AttrSpec{Name: "workspace", Type: cty.String, Required: false},
+		"type":           &hcldec.AttrSpec{Name: "type", Type: cty.String, Required: false},
+		"environment":    &hcldec.AttrSpec{Name: "environment", Type: cty.String, Required: false},
+		"secret_key":     &hcldec.AttrSpec{Name: "secret_key", Type: cty.String, Required: false},
+		"secret_value":   &hcldec.AttrSpec{Name: "secret_value", Type: cty.String, Required: false},
+		"secret_comment": &hcldec.AttrSpec{Name: "secret_comment", Type: cty.String, Required: false},
 	}
 	return s
 }

@@ -21,7 +21,7 @@ build {
 
   provisioner "shell-local" {
     inline = [
-      "echo secret_value: ${local.secrets["FOO"]}",
+      "echo secret_value: ${local.secrets["FOO"].secret_value}",
     ]
   }
 }

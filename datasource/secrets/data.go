@@ -1,5 +1,5 @@
 //go:generate packer-sdc struct-markdown
-//go:generate packer-sdc mapstructure-to-hcl2 -type DatasourceOutput,Config
+//go:generate packer-sdc mapstructure-to-hcl2 -type DatasourceOutput,Config,Secret
 
 package secrets
 
@@ -10,7 +10,6 @@ import (
 	infisical "github.com/infisical/packer-plugin-infisical/client"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
-	"github.com/hashicorp/packer-plugin-sdk/hcl2helper"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/zclconf/go-cty/cty"
 )
@@ -31,8 +30,18 @@ type Config struct {
 	EnvSlug string `mapstructure:"env_slug" required:"true"`
 }
 
+type Secret struct {
+	Version       int    `mapstructure:"version" required:"true"`
+	Workspace     string `mapstructure:"workspace" required:"true"`
+	Type          string `mapstructure:"type" required:"true"`
+	Environment   string `mapstructure:"environment" required:"true"`
+	SecretKey     string `mapstructure:"secret_key" required:"true"`
+	SecretValue   string `mapstructure:"secret_value" required:"true"`
+	SecretComment string `mapstructure:"secret_comment" required:"true"`
+}
+
 type DatasourceOutput struct {
-	Secrets map[string]string `mapstructure:"secrets"`
+	Secrets map[string]Secret `mapstructure:"secrets" required:"true"`
 }
 
 func (d *Datasource) ConfigSpec() hcldec.ObjectSpec {
@@ -71,9 +80,6 @@ func (d *Datasource) Configure(raws ...interface{}) error {
 
 	d.client = client
 
-	fmt.Println("Client")
-	fmt.Println(d.client)
-
 	return nil
 }
 
@@ -88,14 +94,23 @@ func (d *Datasource) Execute() (cty.Value, error) {
 		return cty.NullVal(outputSchemaType), fmt.Errorf("failed to retrieve secrets from Infisical API (folder: '%s', environment: '%s'): %w", d.config.FolderPath, d.config.EnvSlug, err)
 	}
 
-	secretsMap := make(map[string]string)
-	for _, secret := range secrets {
-		secretsMap[secret.SecretKey] = secret.SecretValue
+	ctySecretsMap := make(map[string]cty.Value)
+	for _, s := range secrets {
+		secretVal := cty.ObjectVal(map[string]cty.Value{
+			"version":        cty.NumberIntVal(int64(s.Version)),
+			"workspace":      cty.StringVal(s.Workspace),
+			"type":           cty.StringVal(s.Type),
+			"environment":    cty.StringVal(s.Environment),
+			"secret_key":     cty.StringVal(s.SecretKey),
+			"secret_value":   cty.StringVal(s.SecretValue),
+			"secret_comment": cty.StringVal(s.SecretComment),
+		})
+		ctySecretsMap[s.SecretKey] = secretVal
 	}
 
-	output := DatasourceOutput{
-		Secrets: secretsMap,
-	}
+	outputVal := cty.ObjectVal(map[string]cty.Value{
+		"secrets": cty.MapVal(ctySecretsMap),
+	})
 
-	return hcl2helper.HCL2ValueFromConfig(output, d.OutputSpec()), nil
+	return outputVal, nil
 }

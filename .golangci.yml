@@ -1,0 +1,19 @@
+version: "2"
+
+run:
+  concurrency: 4
+  timeout: 10m
+
+linters:
+  default: none
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unconvert
+    - unused
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

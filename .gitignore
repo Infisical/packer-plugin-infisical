@@ -1,0 +1,7 @@
+main
+dist/*
+packer-plugin-infisical
+.docs
+.DS_Store
+*.sw*
+crash.log

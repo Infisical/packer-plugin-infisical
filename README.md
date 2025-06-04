@@ -33,7 +33,7 @@ To install the plugin, please follow the Packer documentation on [installing a p
 
 ### From Sources
 
-If you prefer to build the plugin from sources, clone the GitHub repository locally and run the command `go build` from the root directory. Upon successful compilation, a `packer-plugin-amazon` plugin binary file can be found in the root directory.
+If you prefer to build the plugin from sources, clone the GitHub repository locally and run the command `go build` from the root directory. Upon successful compilation, a `packer-plugin-infisical` plugin binary file can be found in the root directory.
 
 To install the compiled plugin, please follow the official Packer documentation on [installing a plugin](https://developer.hashicorp.com/packer/docs/plugins#installing-plugins).
 

@@ -29,20 +29,12 @@ rewriteLinks() {
   urlAnchor="(#[^/]+)"
 
   # Rewrite Component Index Page links to the Integration root page.
-  #
-  #                    (\1)     (\2)      (\3)
-  # /packer/plugins/datasources/amazon#anchor-tag-->
-  # /packer/integrations/hashicorp/amazon#anchor-tag
   local find="\(\/packer\/plugins\/$urlSegment\/$urlSegment$urlAnchor?\)"
   local replace="\(\/packer\/integrations\/$organization\/\2\3\)"
   result="$(echo "$result" | sed -E "s/$find/$replace/g")"
 
 
   # Rewrite Component links to the Integration component page
-  #
-  #                    (\1)      (\2)       (\3)       (\4)
-  # /packer/plugins/datasources/amazon/parameterstore#anchor-tag -->
-  # /packer/integrations/{organization}/amazon/latest/components/datasources/parameterstore
   local find="\(\/packer\/plugins\/$urlSegment\/$urlSegment\/$urlSegment$urlAnchor?\)"
   local replace="\(\/packer\/integrations\/$organization\/\2\/latest\/components\/\1\/\3\4\)"
   result="$(echo "$result" | sed -E "s/$find/$replace/g")"

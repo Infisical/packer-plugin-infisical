@@ -5,7 +5,7 @@
 # https://github.com/hashicorp/integration-template#metadata-configuration
 integration {
   name = "Infisical"
-  description = "The Infisical plugin can be using with HashiCorp Packer to read secrets from Infisical."
+  description = "The Infisical plugin can be used with HashiCorp Packer to read secrets from Infisical."
   identifier = "packer/infisical/infisical"
   # flags = ["hcp-ready"]
   component {

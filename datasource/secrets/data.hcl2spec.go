@@ -10,10 +10,11 @@ import (
 // FlatConfig is an auto-generated flat version of Config.
 // Where the contents of a field with a `mapstructure:,squash` tag are bubbled up.
 type FlatConfig struct {
-	Host         *string `mapstructure:"host" cty:"host" hcl:"host"`
-	ServiceToken *string `mapstructure:"service_token" cty:"service_token" hcl:"service_token"`
-	FolderPath   *string `mapstructure:"folder_path" cty:"folder_path" hcl:"folder_path"`
-	EnvSlug      *string `mapstructure:"env_slug" required:"true" cty:"env_slug" hcl:"env_slug"`
+	Host          *string            `mapstructure:"host" cty:"host" hcl:"host"`
+	ProjectId     *string            `mapstructure:"project_id" required:"true" cty:"project_id" hcl:"project_id"`
+	FolderPath    *string            `mapstructure:"folder_path" cty:"folder_path" hcl:"folder_path"`
+	EnvSlug       *string            `mapstructure:"env_slug" required:"true" cty:"env_slug" hcl:"env_slug"`
+	UniversalAuth *FlatUniversalAuth `mapstructure:"universal_auth" cty:"universal_auth" hcl:"universal_auth"`
 }
 
 // FlatMapstructure returns a new FlatConfig.
@@ -28,10 +29,11 @@ func (*Config) FlatMapstructure() interface{ HCL2Spec() map[string]hcldec.Spec }
 // The decoded values from this spec will then be applied to a FlatConfig.
 func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 	s := map[string]hcldec.Spec{
-		"host":          &hcldec.AttrSpec{Name: "host", Type: cty.String, Required: false},
-		"service_token": &hcldec.AttrSpec{Name: "service_token", Type: cty.String, Required: false},
-		"folder_path":   &hcldec.AttrSpec{Name: "folder_path", Type: cty.String, Required: false},
-		"env_slug":      &hcldec.AttrSpec{Name: "env_slug", Type: cty.String, Required: false},
+		"host":           &hcldec.AttrSpec{Name: "host", Type: cty.String, Required: false},
+		"project_id":     &hcldec.AttrSpec{Name: "project_id", Type: cty.String, Required: false},
+		"folder_path":    &hcldec.AttrSpec{Name: "folder_path", Type: cty.String, Required: false},
+		"env_slug":       &hcldec.AttrSpec{Name: "env_slug", Type: cty.String, Required: false},
+		"universal_auth": &hcldec.BlockSpec{TypeName: "universal_auth", Nested: hcldec.ObjectSpec((*FlatUniversalAuth)(nil).HCL2Spec())},
 	}
 	return s
 }
@@ -90,6 +92,31 @@ func (*FlatSecret) HCL2Spec() map[string]hcldec.Spec {
 		"secret_key":     &hcldec.AttrSpec{Name: "secret_key", Type: cty.String, Required: false},
 		"secret_value":   &hcldec.AttrSpec{Name: "secret_value", Type: cty.String, Required: false},
 		"secret_comment": &hcldec.AttrSpec{Name: "secret_comment", Type: cty.String, Required: false},
+	}
+	return s
+}
+
+// FlatUniversalAuth is an auto-generated flat version of UniversalAuth.
+// Where the contents of a field with a `mapstructure:,squash` tag are bubbled up.
+type FlatUniversalAuth struct {
+	ClientID     *string `mapstructure:"client_id" required:"true" cty:"client_id" hcl:"client_id"`
+	ClientSecret *string `mapstructure:"client_secret" required:"true" cty:"client_secret" hcl:"client_secret"`
+}
+
+// FlatMapstructure returns a new FlatUniversalAuth.
+// FlatUniversalAuth is an auto-generated flat version of UniversalAuth.
+// Where the contents a fields with a `mapstructure:,squash` tag are bubbled up.
+func (*UniversalAuth) FlatMapstructure() interface{ HCL2Spec() map[string]hcldec.Spec } {
+	return new(FlatUniversalAuth)
+}
+
+// HCL2Spec returns the hcl spec of a UniversalAuth.
+// This spec is used by HCL to read the fields of UniversalAuth.
+// The decoded values from this spec will then be applied to a FlatUniversalAuth.
+func (*FlatUniversalAuth) HCL2Spec() map[string]hcldec.Spec {
+	s := map[string]hcldec.Spec{
+		"client_id":     &hcldec.AttrSpec{Name: "client_id", Type: cty.String, Required: false},
+		"client_secret": &hcldec.AttrSpec{Name: "client_secret", Type: cty.String, Required: false},
 	}
 	return s
 }

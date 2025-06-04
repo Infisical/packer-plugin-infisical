@@ -10,6 +10,12 @@ packer {
 data "infisical-secrets" "dev-secrets" {
   folder_path = "/"
   env_slug    = "dev"
+  project_id  = "00000000-0000-0000-0000-000000000000"
+
+  universal_auth {
+    client_id = "00000000-0000-0000-0000-000000000000"
+    client_secret = "..."
+  }
 }
 
 locals {

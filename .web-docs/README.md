@@ -30,16 +30,21 @@ $ packer plugins install github.com/infisical/infisical
 
 The Infisical provider currently supports these authentication methods:
 
-- Service Token
+- Universal Auth
 
-#### Service Token
+#### Universal Auth
 
-The service token can either be provided via `INFISICAL_SERVICE_TOKEN` environment variable or manually passed as shown below:
+Usage example:
 
 ```hcl
 data "infisical-secrets" "dev-secrets" {
   folder_path = "/"
   env_slug    = "dev"
-  service_token = "st.00000000-0000-0000-0000-000000000000.d695d74bdc5c4d67ac1babd0831bd80c.b993671a3049bdd1b5f6744b44cbe0af"
+  project_id  = "00000000-0000-0000-0000-000000000000"
+
+  universal_auth {
+    client_id = "00000000-0000-0000-0000-000000000000"
+    client_secret = "..."
+  }
 }
 ```

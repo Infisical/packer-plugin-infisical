@@ -8,7 +8,12 @@ Basic examples of usage:
 data "infisical-secrets" "dev-secrets" {
   folder_path = "/"
   env_slug    = "dev"
-  service_token = "st.00000000-0000-0000-0000-000000000000.d695d74bdc5c4d67ac1babd0831bd80c.b993671a3049bdd1b5f6744b44cbe0af"
+  project_id  = "00000000-0000-0000-0000-000000000000"
+
+  universal_auth {
+    client_id = "00000000-0000-0000-0000-000000000000"
+    client_secret = "..."
+  }
 }
 
 # usage example of the data source output
@@ -24,6 +29,8 @@ locals {
 
 <!-- Code generated from the comments of the Config struct in datasource/secrets/data.go; DO NOT EDIT MANUALLY -->
 
+- `project_id` (string) - The project to list secrets from.
+
 - `env_slug` (string) - The environment to list secrets from.
 
 <!-- End of code generated from the comments of the Config struct in datasource/secrets/data.go; -->
@@ -34,11 +41,21 @@ locals {
 
 - `host` (string) - The host URL of your Infisical instance. If a value isn't provided, INFISICAL_HOST may be used. Default: https://app.infisical.com
 
-- `service_token` (string) - The Infisical API Access Token. If a value isn't provided, INFISICAL_SERVICE_TOKEN may be used.
-
 - `folder_path` (string) - The secret path to list secrets from. Default: /
 
+- `universal_auth` (UniversalAuth) - Configuration for Infisical Universal Authentication.
+
 <!-- End of code generated from the comments of the Config struct in datasource/secrets/data.go; -->
+
+### Universal Auth Object
+
+<!-- Code generated from the comments of the UniversalAuth struct in datasource/secrets/data.go; DO NOT EDIT MANUALLY -->
+
+- `client_id` (string) - The Client ID for Infisical Universal Authentication.
+
+- `client_secret` (string) - The Client Secret for Infisical Universal Authentication.
+
+<!-- End of code generated from the comments of the UniversalAuth struct in datasource/secrets/data.go; -->
 
 ## Output Data
 
@@ -72,12 +89,17 @@ Returned secrets are in key/object pairs. Each Secret object contains data about
 
 ## Authentication
 
-Basic example of an Infisical Secrets data source authentication using service token:
+Basic example of an Infisical Secrets data source authentication using universal auth:
 
 ```hcl
 data "infisical-secrets" "dev-secrets" {
   folder_path = "/"
   env_slug    = "dev"
-  service_token = "st.00000000-0000-0000-0000-000000000000.d695d74bdc5c4d67ac1babd0831bd80c.b993671a3049bdd1b5f6744b44cbe0af"
+  project_id  = "00000000-0000-0000-0000-000000000000"
+
+  universal_auth {
+    client_id = "00000000-0000-0000-0000-000000000000"
+    client_secret = "..."
+  }
 }
 ```

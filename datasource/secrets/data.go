@@ -1,5 +1,5 @@
 //go:generate packer-sdc struct-markdown
-//go:generate packer-sdc mapstructure-to-hcl2 -type DatasourceOutput,Config,Secret
+//go:generate packer-sdc mapstructure-to-hcl2 -type DatasourceOutput,Config,Secret,UniversalAuth
 
 package secrets
 
@@ -19,15 +19,25 @@ type Datasource struct {
 	client *infisical.Client
 }
 
+type UniversalAuth struct {
+	// The Client ID for Infisical Universal Authentication.
+	ClientID string `mapstructure:"client_id" required:"true"`
+	// The Client Secret for Infisical Universal Authentication.
+	ClientSecret string `mapstructure:"client_secret" required:"true"`
+}
+
 type Config struct {
 	// The host URL of your Infisical instance. If a value isn't provided, INFISICAL_HOST may be used. Default: https://app.infisical.com
 	Host string `mapstructure:"host"`
-	// The Infisical API Access Token. If a value isn't provided, INFISICAL_SERVICE_TOKEN may be used.
-	ServiceToken string `mapstructure:"service_token"`
+	// The project to list secrets from.
+	ProjectId string `mapstructure:"project_id" required:"true"`
 	// The secret path to list secrets from. Default: /
 	FolderPath string `mapstructure:"folder_path"`
 	// The environment to list secrets from.
 	EnvSlug string `mapstructure:"env_slug" required:"true"`
+
+	// Configuration for Infisical Universal Authentication.
+	UniversalAuth UniversalAuth `mapstructure:"universal_auth"`
 }
 
 type Secret struct {
@@ -67,15 +77,23 @@ func (d *Datasource) Configure(raws ...interface{}) error {
 		}
 	}
 
-	serviceToken := os.Getenv("INFISICAL_SERVICE_TOKEN")
-	if d.config.ServiceToken == "" {
-		d.config.ServiceToken = serviceToken
+	// Validate UniversalAuth credentials
+	if d.config.UniversalAuth.ClientID == "" {
+		return fmt.Errorf("universal_auth.client_id is required")
+	}
+	if d.config.UniversalAuth.ClientSecret == "" {
+		return fmt.Errorf("universal_auth.client_secret is required")
 	}
 
-	client, client_err := infisical.NewClient(infisical.Config{HostURL: d.config.Host, ServiceToken: d.config.ServiceToken})
+	clientCfg := infisical.Config{
+		HostURL:      d.config.Host,
+		ClientId:     d.config.UniversalAuth.ClientID,
+		ClientSecret: d.config.UniversalAuth.ClientSecret,
+	}
 
+	client, client_err := infisical.NewClient(clientCfg)
 	if client_err != nil {
-		return client_err
+		return fmt.Errorf("failed to initialize Infisical client using Universal Authentication: %w", client_err)
 	}
 
 	d.client = client
@@ -88,7 +106,7 @@ func (d *Datasource) OutputSpec() hcldec.ObjectSpec {
 }
 
 func (d *Datasource) Execute() (cty.Value, error) {
-	secrets, err := d.client.GetRawSecretsViaServiceToken(d.config.FolderPath, d.config.EnvSlug)
+	secrets, err := d.client.GetRawSecrets(d.config.FolderPath, d.config.EnvSlug, d.config.ProjectId)
 	if err != nil {
 		outputSchemaType := hcldec.ImpliedType(d.OutputSpec())
 		return cty.NullVal(outputSchemaType), fmt.Errorf("failed to retrieve secrets from Infisical API (folder: '%s', environment: '%s'): %w", d.config.FolderPath, d.config.EnvSlug, err)

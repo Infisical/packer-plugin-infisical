@@ -49,11 +49,19 @@ locals {
 
 ### Universal Auth Object
 
+**Required:**
+
 <!-- Code generated from the comments of the UniversalAuth struct in datasource/secrets/data.go; DO NOT EDIT MANUALLY -->
 
 - `client_id` (string) - The Client ID for Infisical Universal Authentication.
 
-- `client_secret` (string) - The Client Secret for Infisical Universal Authentication.
+<!-- End of code generated from the comments of the UniversalAuth struct in datasource/secrets/data.go; -->
+
+**Optional:**
+
+<!-- Code generated from the comments of the UniversalAuth struct in datasource/secrets/data.go; DO NOT EDIT MANUALLY -->
+
+- `client_secret` (string) - The Client Secret for Infisical Universal Authentication. You may use INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET env variable instead.
 
 <!-- End of code generated from the comments of the UniversalAuth struct in datasource/secrets/data.go; -->
 
@@ -103,3 +111,5 @@ data "infisical-secrets" "dev-secrets" {
   }
 }
 ```
+
+`client_secret` may be left blank if you're using the `INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET` environment variable.

@@ -100,7 +100,7 @@ func (*FlatSecret) HCL2Spec() map[string]hcldec.Spec {
 // Where the contents of a field with a `mapstructure:,squash` tag are bubbled up.
 type FlatUniversalAuth struct {
 	ClientID     *string `mapstructure:"client_id" required:"true" cty:"client_id" hcl:"client_id"`
-	ClientSecret *string `mapstructure:"client_secret" required:"true" cty:"client_secret" hcl:"client_secret"`
+	ClientSecret *string `mapstructure:"client_secret" cty:"client_secret" hcl:"client_secret"`
 }
 
 // FlatMapstructure returns a new FlatUniversalAuth.

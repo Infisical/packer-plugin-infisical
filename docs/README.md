@@ -48,3 +48,5 @@ data "infisical-secrets" "dev-secrets" {
   }
 }
 ```
+
+`client_secret` may be left blank if you're using the `INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET` environment variable.

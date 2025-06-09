@@ -22,8 +22,8 @@ type Datasource struct {
 type UniversalAuth struct {
 	// The Client ID for Infisical Universal Authentication.
 	ClientID string `mapstructure:"client_id" required:"true"`
-	// The Client Secret for Infisical Universal Authentication.
-	ClientSecret string `mapstructure:"client_secret" required:"true"`
+	// The Client Secret for Infisical Universal Authentication. You may use INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET env variable instead.
+	ClientSecret string `mapstructure:"client_secret"`
 }
 
 type Config struct {
@@ -82,7 +82,11 @@ func (d *Datasource) Configure(raws ...interface{}) error {
 		return fmt.Errorf("universal_auth.client_id is required")
 	}
 	if d.config.UniversalAuth.ClientSecret == "" {
-		return fmt.Errorf("universal_auth.client_secret is required")
+		clientSecret := os.Getenv("INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET")
+		if clientSecret == "" {
+			return fmt.Errorf("universal_auth.client_secret config variable or INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET env variable required")
+		}
+		d.config.UniversalAuth.ClientSecret = clientSecret
 	}
 
 	clientCfg := infisical.Config{

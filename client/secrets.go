@@ -1,33 +1,10 @@
 package infisicalclient
 
 import (
+	"encoding/json"
 	"fmt"
-	"net/http"
 	"strconv"
-	"strings"
 )
-
-func (client Client) GetSingleSecretByIDV3(request GetSingleSecretByIDV3Request) (GetSingleSecretByIDV3Response, error) {
-	var secretsResponse GetSingleSecretByIDV3Response
-	response, err := client.Config.HttpClient.
-		R().
-		SetResult(&secretsResponse).
-		SetHeader("User-Agent", USER_AGENT).
-		Get(fmt.Sprintf("api/v3/secrets/raw/id/%s", request.ID))
-
-	if err != nil {
-		return GetSingleSecretByIDV3Response{}, fmt.Errorf("CallGetSingleSecretByIDV3: Unable to complete api request [err=%s]", err)
-	}
-
-	if response.IsError() {
-		if response.StatusCode() == http.StatusNotFound {
-			return GetSingleSecretByIDV3Response{}, ErrNotFound
-		}
-		return GetSingleSecretByIDV3Response{}, fmt.Errorf("CallGetSingleSecretByIDV3: Unsuccessful response. [response=%s]", response)
-	}
-
-	return secretsResponse, nil
-}
 
 func (client Client) GetSecretsRawV3(request GetRawSecretsV3Request) (GetRawSecretsV3Response, error) {
 	var secretsResponse GetRawSecretsV3Response
@@ -53,7 +30,17 @@ func (client Client) GetSecretsRawV3(request GetRawSecretsV3Request) (GetRawSecr
 	}
 
 	if response.IsError() {
-		return GetRawSecretsV3Response{}, fmt.Errorf("CallGetSecretsRawV3: Unsuccessful response. Please make sure your secret path, workspace and environment name are all correct [response=%v]", response.RawResponse)
+		// Attempt to extract the specific error message from the JSON response body
+		var apiErrorDetail struct {
+			Message string `json:"message"`
+		}
+
+		if unmarshalErr := json.Unmarshal(response.Body(), &apiErrorDetail); unmarshalErr == nil && apiErrorDetail.Message != "" {
+			return GetRawSecretsV3Response{}, fmt.Errorf("CallGetSecretsRawV3: API error: %s", apiErrorDetail.Message)
+		}
+
+		// Fallback if JSON parsing fails or the "message" field is not found or is empty.
+		return GetRawSecretsV3Response{}, fmt.Errorf("CallGetSecretsRawV3: Unsuccessful response (Status: %s). Please make sure your secret path, workspace and environment name are all correct. Raw body: %s", response.Status(), response.String())
 	}
 
 	return secretsResponse, nil
@@ -77,28 +64,4 @@ func (client Client) GetRawSecrets(secretFolderPath string, envSlug string, work
 	}
 
 	return secrets.Secrets, nil
-}
-
-func (client Client) GetRawSecretsViaServiceToken(secretFolderPath string, envSlug string) ([]RawV3Secret, error) {
-	if client.Config.ServiceToken == "" {
-		return nil, fmt.Errorf("service token must be defined to fetch secrets")
-	}
-
-	serviceTokenParts := strings.SplitN(client.Config.ServiceToken, ".", 4)
-	if len(serviceTokenParts) < 4 {
-		return nil, fmt.Errorf("invalid service token entered. Please double check your service token and try again")
-	}
-
-	serviceTokenDetails, err := client.GetServiceTokenDetailsV2()
-	if err != nil {
-		return nil, fmt.Errorf("unable to get service token details. [err=%v]", err)
-	}
-
-	secrets, err := client.GetRawSecrets(secretFolderPath, envSlug, serviceTokenDetails.Workspace)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return secrets, nil
 }

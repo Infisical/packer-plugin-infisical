@@ -33,7 +33,7 @@ type Config struct {
 	ProjectId string `mapstructure:"project_id" required:"true"`
 	// The secret path to list secrets from. Default: /
 	FolderPath string `mapstructure:"folder_path"`
-	// The environment to list secrets from.
+	// The environment to list secrets from. (e.g. dev, staging, prod)
 	EnvSlug string `mapstructure:"env_slug" required:"true"`
 
 	// Configuration for Infisical Universal Authentication.
@@ -62,6 +62,14 @@ func (d *Datasource) Configure(raws ...interface{}) error {
 	err := config.Decode(&d.config, nil, raws...)
 	if err != nil {
 		return err
+	}
+
+	// Verify required variables are passed
+	if d.config.ProjectId == "" {
+		return fmt.Errorf("project_id is required")
+	}
+	if d.config.EnvSlug == "" {
+		return fmt.Errorf("env_slug is required")
 	}
 
 	if d.config.FolderPath == "" {

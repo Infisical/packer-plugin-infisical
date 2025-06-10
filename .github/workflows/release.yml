@@ -7,8 +7,6 @@ permissions:
   contents: write
 jobs:
   goreleaser:
-    needs:
-      - get-go-version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

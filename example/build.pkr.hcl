@@ -1,7 +1,7 @@
 packer {
   required_plugins {
     infisical = {
-      version = ">= 1.0.0"
+      version = ">=0.0.1"
       source  = "github.com/infisical/infisical"
     }
   }

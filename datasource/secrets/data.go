@@ -124,6 +124,11 @@ func (d *Datasource) Execute() (cty.Value, error) {
 		return cty.NullVal(outputSchemaType), fmt.Errorf("failed to retrieve secrets from Infisical API (folder: '%s', environment: '%s'): %w", d.config.FolderPath, d.config.EnvSlug, err)
 	}
 
+	if len(secrets) == 0 {
+		outputSchemaType := hcldec.ImpliedType(d.OutputSpec())
+		return cty.NullVal(outputSchemaType), fmt.Errorf("no secrets found in Infisical (folder: '%s', environment: '%s', project_id: '%s')", d.config.FolderPath, d.config.EnvSlug, d.config.ProjectId)
+	}
+
 	ctySecretsMap := make(map[string]cty.Value)
 	for _, s := range secrets {
 		secretVal := cty.ObjectVal(map[string]cty.Value{

@@ -1,6 +1,6 @@
 module github.com/infisical/packer-plugin-infisical
 
-go 1.24.3
+go 1.26.10
 
 require (
 	github.com/hashicorp/hcl/v2 v2.19.1

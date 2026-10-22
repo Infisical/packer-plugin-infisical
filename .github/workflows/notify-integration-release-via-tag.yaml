@@ -16,6 +16,10 @@ jobs:
         run: |
           echo "packer-version=$(echo "$REF" | sed -E 's/v?([0-9]+\.[0-9]+\.[0-9]+)/\1/')" >> "$GITHUB_OUTPUT"
   notify-release:
+    # Infisical is not listed in the HashiCorp integration registry yet, so this
+    # job fails on every tag. Set the INTEGRATION_RELEASE_ENABLED repository
+    # variable to true once the integration is registered.
+    if: vars.INTEGRATION_RELEASE_ENABLED == 'true'
     needs:
       - strip-version
     runs-on: ubuntu-latest

@@ -24,7 +24,7 @@ $ packer plugins install github.com/infisical/infisical
 
 #### Data Sources
 
-- [infisical-secrets](/docs/datasources/secrets.md) - Retrieve secrets from a folder.
+- [infisical-secrets](/packer/integrations/infisical/infisical/latest/components/datasource/secrets) - Retrieve secrets from a folder.
 
 ### Authentication
 
